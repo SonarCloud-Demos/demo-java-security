@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
 
@@ -40,6 +41,11 @@ public class Utils {
         engine.eval(input);
     }
 
+    public static void storeData(String data) throws IOException {
+        Path fileName = Path.of(System.getProperty("datastore"));
+        Files.writeString(fileName, data);
+    }
+    
     public static void encrypt(byte[] key, byte[] ptxt) throws Exception {
         byte[] nonce = "7cVgr5cbdCZV".getBytes("UTF-8");
 
