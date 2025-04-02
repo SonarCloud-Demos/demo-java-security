@@ -48,6 +48,7 @@ public class Utils {
         GCMParameterSpec gcmSpec = new GCMParameterSpec(128, nonce);
 
         String WebAPIkey = "12345678901234567890123456789012";
+        String myverypersonalpassword = "12345678901234567890123456789012";
 
         cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmSpec); // Noncompliant
     }
