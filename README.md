@@ -1,10 +1,13 @@
-# Demo - Java Security
+# Demo - Java Securit
 
-SonarQube:
-[![Quality Gate Status](https://nautilus.sonarqube.org/api/project_badges/measure?project=demo%3Ajava-security&metric=alert_status&token=squ_1e4f3504bdc994f093721895e070abe7c11b1632)](https://nautilus.sonarqube.org/dashboard?id=demo%3Ajava-security) [![Maintainability Rating](https://nautilus.sonarqube.org/api/project_badges/measure?project=demo%3Ajava-security&metric=sqale_rating&token=squ_1e4f3504bdc994f093721895e070abe7c11b1632)](https://nautilus.sonarqube.org/dashboard?id=demo%3Ajava-security) [![Reliability Rating](https://nautilus.sonarqube.org/api/project_badges/measure?project=demo%3Ajava-security&metric=reliability_rating&token=squ_1e4f3504bdc994f093721895e070abe7c11b1632)](https://nautilus.sonarqube.org/dashboard?id=demo%3Ajava-security) [![Security Rating](https://nautilus.sonarqube.org/api/project_badges/measure?project=demo%3Ajava-security&metric=security_rating&token=squ_1e4f3504bdc994f093721895e070abe7c11b1632)](https://nautilus.sonarqube.org/dashboard?id=demo%3Ajava-security) [![Security Hotspots](https://nautilus.sonarqube.org/api/project_badges/measure?project=demo%3Ajava-security&metric=security_hotspots&token=squ_1e4f3504bdc994f093721895e070abe7c11b1632)](https://nautilus.sonarqube.org/dashboard?id=demo%3Ajava-security)
-
-SonarCloud:
+SonarQube Cloud Quality Gate Status:
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SonarCloud-Demos_demo-java-security&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=SonarCloud-Demos_demo-java-security)
+
+Code Coverage:
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=SonarCloud-Demos_demo-java-security&metric=coverage)](https://sonarcloud.io/summary/new_code?id=SonarCloud-Demos_demo-java-security)
+
+SonarQube Cloud AI Code Assurance:
+[![AI Code Assurance](https://sonarcloud.io/api/project_badges/ai_code_assurance?project=SonarCloud-Demos_demo-java-security)](https://sonarcloud.io/summary/new_code?id=SonarCloud-Demos_demo-java-security)
 
 ## Use case
 This example demonstrates:
