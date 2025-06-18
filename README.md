@@ -1,4 +1,4 @@
-# Demo - Java Securit
+# Demo - Java Security
 
 SonarQube Cloud Quality Gate Status:
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SonarCloud-Demos_demo-java-security&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=SonarCloud-Demos_demo-java-security)
