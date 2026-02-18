@@ -38,6 +38,18 @@
       <artifactId>commons-codec</artifactId>
       <version>1.16.0</version>
     </dependency>
+    <!-- For search/export feature logging -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.14.0</version>
+    </dependency>
+    <!-- Collection utilities for export report building -->
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2.1</version>
+    </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
