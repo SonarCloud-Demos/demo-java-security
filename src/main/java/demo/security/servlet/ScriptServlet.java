@@ -18,7 +18,7 @@ public class ScriptServlet extends HttpServlet {
         try {
             Utils.executeJs(data);
         } catch (ScriptException e) {
-            throw new RuntimeException(e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }

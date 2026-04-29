@@ -20,9 +20,18 @@ public class HomeServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
-        String name = request.getParameter("name").trim();
-        response.setContentType("text/html");
-        writeResponse(response, name);
+        try {
+            String param = request.getParameter("name");
+            String name = (param != null) ? param.trim() : "";
+            response.setContentType("text/html");
+            writeResponse(response, name);
+        } catch (IOException e) {
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred processing the request.");
+            } catch (IOException ex) {
+                // Unable to send error response to client
+            }
+        }
     }
     
     protected void writeResponse(HttpServletResponse response, String name) throws IOException {
@@ -32,8 +41,12 @@ public class HomeServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request,
-                          HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
+                          HttpServletResponse response) {
+        try {
+            doGet(request, response);
+        } catch (ServletException | IOException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
