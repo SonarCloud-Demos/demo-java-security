@@ -25,12 +25,16 @@ public class MichaelQgFailServlet extends HttpServlet {
         String message = request.getParameter("msg");
 
         response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.print("<html><body>");
-        out.print("<p>Lookup result: " + lookupUser(username) + "</p>");
-        out.print("<p>Your message: " + message + "</p>");
-        out.print("</body></html>");
-        out.close();
+        try {
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print("<p>Lookup result: " + lookupUser(username) + "</p>");
+            out.print("<p>Your message: " + message + "</p>");
+            out.print("</body></html>");
+            out.close();
+        } catch (IOException e) {
+            throw new ServletException(e);
+        }
     }
 
     private String lookupUser(String user) {
@@ -38,7 +42,7 @@ public class MichaelQgFailServlet extends HttpServlet {
             return "no user specified";
         }
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:demo", "demo", "demo");
+                "mYJDBCUrl", "myJDBCUser", "myJDBCPass");
              Statement statement = connection.createStatement()) {
             String query = "SELECT userid FROM users WHERE username = '" + user + "'";
             ResultSet resultSet = statement.executeQuery(query);
