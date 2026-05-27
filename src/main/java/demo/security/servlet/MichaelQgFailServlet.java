@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,33 +26,54 @@ public class MichaelQgFailServlet extends HttpServlet {
         String message = request.getParameter("msg");
 
         response.setContentType("text/html");
-        try {
-            PrintWriter out = response.getWriter();
-            out.print("<html><body>");
-            out.print("<p>Lookup result: " + lookupUser(username) + "</p>");
-            out.print("<p>Your message: " + message + "</p>");
-            out.print("</body></html>");
-            out.close();
-        } catch (IOException e) {
-            throw new ServletException(e);
-        }
+        PrintWriter out = response.getWriter();
+        out.print("<html><body>");
+        out.print("<p>Lookup result: " + escapeHtml(lookupUser(username)) + "</p>");
+        out.print("<p>Your message: " + escapeHtml(message) + "</p>");
+        out.print("</body></html>");
+        out.close();
     }
 
-    private String lookupUser(String user) {
+    static String escapeHtml(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+
+    String lookupUser(String user) {
         if (user == null) {
             return "no user specified";
         }
-        try (Connection connection = DriverManager.getConnection(
-                "mYJDBCUrl", "myJDBCUser", "myJDBCPass");
-             Statement statement = connection.createStatement()) {
-            String query = "SELECT userid FROM users WHERE username = '" + user + "'";
-            ResultSet resultSet = statement.executeQuery(query);
-            if (resultSet.next()) {
-                return resultSet.getString(1);
-            }
-            return "not found";
+        try (Connection connection = openConnection()) {
+            return queryUserId(connection, user);
         } catch (Exception e) {
             return "error: " + e.getMessage();
         }
+    }
+
+    String queryUserId(Connection connection, String user) throws SQLException {
+        String sql = "SELECT userid FROM users WHERE username = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, user);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getString(1);
+                }
+                return "not found";
+            }
+        }
+    }
+
+    Connection openConnection() throws SQLException {
+        String url = System.getenv().getOrDefault("JDBC_URL", "jdbc:default");
+        String username = System.getenv().getOrDefault("JDBC_USER", "");
+        String password = System.getenv().getOrDefault("JDBC_PASSWORD", "");
+        return DriverManager.getConnection(url, username, password);
     }
 }
