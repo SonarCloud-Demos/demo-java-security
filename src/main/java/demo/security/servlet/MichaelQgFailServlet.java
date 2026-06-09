@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.owasp.encoder.Encode;
+
 @WebServlet("/michael-qg-fail")
 public class MichaelQgFailServlet extends HttpServlet {
 
@@ -22,16 +24,24 @@ public class MichaelQgFailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("user");
-        String message = request.getParameter("msg");
+        try {
+            String username = request.getParameter("user");
+            String message = request.getParameter("msg");
 
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.print("<html><body>");
-        out.print("<p>Lookup result: " + escapeHtml(lookupUser(username)) + "</p>");
-        out.print("<p>Your message: " + escapeHtml(message) + "</p>");
-        out.print("</body></html>");
-        out.close();
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print("<p>Lookup result: " + Encode.forHtml(lookupUser(username)) + "</p>");
+            out.print("<p>Your message: " + Encode.forHtml(message) + "</p>");
+            out.print("</body></html>");
+            out.close();
+        } catch (Exception e) {
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An internal error occurred");
+            } catch (IOException ioe) {
+                // Unable to send error response; log or ignore
+            }
+        }
     }
 
     static String escapeHtml(String value) {
