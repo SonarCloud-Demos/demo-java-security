@@ -92,7 +92,7 @@ public class MichaelQgFailServletTest {
     }
 
     @Test
-    public void lookupUser_whenQueryFails_returnsErrorMessage() throws Exception {
+    public void lookupUser_whenQueryFails_returnsErrorMessage() {
         MichaelQgFailServlet servlet =
                 new MichaelQgFailServlet() {
                     @Override
