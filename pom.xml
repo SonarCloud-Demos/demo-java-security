@@ -12,6 +12,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+    <sonar.projectKey>SonarCloud-Demos_demo-java-security</sonar.projectKey>
     <sonar.projectName>Java Web App</sonar.projectName>
     <sonar.encoding>UTF-8</sonar.encoding>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
