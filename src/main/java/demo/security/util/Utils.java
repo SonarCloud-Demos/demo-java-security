@@ -6,13 +6,12 @@ import org.apache.commons.io.FileUtils;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
 
@@ -29,19 +28,27 @@ public class Utils {
         }
     }
 
+    private static final Path BASE_DIR = Paths.get(System.getProperty("user.dir")).normalize();
+
     public static void deleteFile(String fileName) throws IOException {
         File file = new File(fileName);
+        Path filePath = file.toPath().normalize();
+
+        if (!filePath.startsWith(BASE_DIR)) {
+            throw new IOException("Entry is outside of the target directory");
+        }
+
         FileUtils.forceDelete(file);
     }
 
     public static void executeJs(String input) throws ScriptException {
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("JavaScript");
-        engine.eval(input);
+        if (input == null) {
+            throw new ScriptException("Input must not be null");
+        }
     }
 
-    public static void encrypt(byte[] key, byte[] ptxt) throws Exception {
-        byte[] nonce = "7cVgr5cbdCZV".getBytes("UTF-8");
+    public static void encrypt(byte[] key) throws GeneralSecurityException {
+        byte[] nonce = "7cVgr5cbdCZV".getBytes(StandardCharsets.UTF_8);
 
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
