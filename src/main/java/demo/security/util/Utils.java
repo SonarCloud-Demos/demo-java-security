@@ -18,6 +18,8 @@ import java.security.*;
 
 public class Utils {
 
+    private static final SecureRandom RANDOM = new SecureRandom();
+
     public static KeyPair generateKey() {
         KeyPairGenerator keyPairGen;
         try {
@@ -41,7 +43,8 @@ public class Utils {
     }
 
     public static void encrypt(byte[] key, byte[] ptxt) throws Exception {
-        byte[] nonce = "7cVgr5cbdCZV".getBytes("UTF-8");
+        byte[] nonce = new byte[12];
+        RANDOM.nextBytes(nonce);
 
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         SecretKeySpec keySpec = new SecretKeySpec(key, "AES");

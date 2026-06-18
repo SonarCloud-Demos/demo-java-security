@@ -18,18 +18,10 @@ public class WebUtils {
         String sessionId = request.getRequestedSessionId();
         if (sessionId != null){
             String ip = "10.40.1.1";
-            Socket socket = null;
-            try {
-                socket = new Socket(ip, 6667);
+            try (Socket socket = new Socket(ip, 6667)) {
                 socket.getOutputStream().write(sessionId.getBytes(StandardCharsets.UTF_8));
             } catch (IOException e) {
                 throw new RuntimeException(e);
-            } finally {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    // TODO - Handle this
-                }
             }
         }
     }
