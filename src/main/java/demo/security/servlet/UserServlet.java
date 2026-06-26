@@ -9,9 +9,15 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet("/users")
 public class UserServlet extends HttpServlet {
@@ -33,12 +39,30 @@ public class UserServlet extends HttpServlet {
 
     }
 
+    private static class SecureObjectInputStream extends ObjectInputStream {
+        private static final Set<String> ALLOWED_CLASSES = new HashSet<>(Arrays.asList(
+                SessionHeader.class.getName()
+        ));
+
+        public SecureObjectInputStream(InputStream in) throws IOException {
+            super(in);
+        }
+
+        @Override
+        protected Class<?> resolveClass(ObjectStreamClass osc) throws IOException, ClassNotFoundException {
+            if (!ALLOWED_CLASSES.contains(osc.getName())) {
+                throw new InvalidClassException("Unauthorized deserialization", osc.getName());
+            }
+            return super.resolveClass(osc);
+        }
+    }
+
     private SessionHeader getSessionHeader(HttpServletRequest request) {
         String sessionAuth = request.getHeader("Session-Auth");
         if (sessionAuth != null) {
             try {
                 byte[] decoded = Base64.decodeBase64(sessionAuth);
-                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(decoded));
+                ObjectInputStream in = new SecureObjectInputStream(new ByteArrayInputStream(decoded));
                 return (SessionHeader) in.readObject();
             } catch (Exception e) {
                 return null;
