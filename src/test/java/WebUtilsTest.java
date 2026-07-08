@@ -13,7 +13,7 @@ public class WebUtilsTest {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getRequestedSessionId()).thenReturn("validSessionId");
 
-        // WebUtils.getSessionId(request);
+        assertThrows(RuntimeException.class, () -> WebUtils.getSessionId(request));
     }
 
     @Test
@@ -21,7 +21,8 @@ public class WebUtilsTest {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getRequestedSessionId()).thenReturn(null);
 
-        // WebUtils.getSessionId(request);
+        WebUtils.getSessionId(request);
+        Mockito.verify(request).getRequestedSessionId();
     }
 
     @Test
