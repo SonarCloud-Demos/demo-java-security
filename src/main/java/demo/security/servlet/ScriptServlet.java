@@ -14,11 +14,15 @@ import java.io.IOException;
 public class ScriptServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String data = request.getParameter("data");
         try {
+            String data = request.getParameter("data");
             Utils.executeJs(data);
         } catch (ScriptException e) {
-            throw new RuntimeException(e);
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (IOException ioe) {
+                // Silently handle to prevent exception propagation
+            }
         }
     }
 }
