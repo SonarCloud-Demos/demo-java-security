@@ -1,7 +1,9 @@
 package demo.security.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -11,12 +13,13 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 
 public class Utils {
+
+    private static final String DOCUMENTS_ROOT = "/var/app/documents";
 
     public static KeyPair generateKey() {
         KeyPairGenerator keyPairGen;
@@ -41,6 +44,39 @@ public class Utils {
     public static void deleteFile(String fileName) throws IOException {
         File file = new File(fileName);
         FileUtils.forceDelete(file);
+    }
+
+    /**
+     * Advanced SAST demo: first-party hop through Apache Commons IO.
+     * separatorsToUnix is not a sanitizer; taint continues into FileUtils sinks.
+     */
+    public static String prepareDocumentPath(String documentId) {
+        return FilenameUtils.separatorsToUnix(documentId);
+    }
+
+    /**
+     * Advanced SAST demo: first-party orchestration through Apache Commons IO.
+     * FilenameUtils.concat + FileUtils.readFileToString are third-party path sinks.
+     */
+    public static String loadDocument(String documentId) throws IOException {
+        String relative = prepareDocumentPath(documentId);
+        String absolute = FilenameUtils.concat(DOCUMENTS_ROOT, relative);
+        return FileUtils.readFileToString(new File(absolute), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Advanced SAST demo: taint passes through commons-io IOUtils (third-party).
+     */
+    public static String readRequestBody(InputStream body) throws IOException {
+        return IOUtils.toString(body, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Advanced SAST demo: taint passes through commons-codec Base64 (third-party).
+     */
+    public static String decodeUserToken(String encodedToken) {
+        byte[] decoded = Base64.decodeBase64(encodedToken);
+        return new String(decoded, StandardCharsets.UTF_8);
     }
 
     public static void executeJs(String input) throws ScriptException {
