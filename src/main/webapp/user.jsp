@@ -1,4 +1,8 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>User Search</title>
+</head>
 <body>
 <h2>Maven JSP and Servlet Hello World</h2>
 <form action="users" method="get">

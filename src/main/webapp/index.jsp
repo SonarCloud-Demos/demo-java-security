@@ -1,4 +1,8 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Java Security Demo</title>
+</head>
 <body>
 <h2>Maven JSP and Servlet Hello World</h2>
 <form action="helloWorld" method="post">

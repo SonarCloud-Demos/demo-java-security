@@ -1,3 +1,5 @@
+package demo.security;
+
 import demo.security.util.Utils;
 import org.junit.Test;
 

@@ -18,7 +18,7 @@ public class ScriptServlet extends HttpServlet {
         try {
             Utils.executeJs(data);
         } catch (ScriptException e) {
-            throw new RuntimeException(e);
+            throw new ServletException(e);
         }
     }
 }
