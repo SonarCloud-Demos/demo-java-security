@@ -18,8 +18,12 @@ public class XxeServlet extends HttpServlet {
         String xml = request.getParameter("xml");
         try {
             Utils.parseXml(xml);
-        } catch (ParserConfigurationException | SAXException e) {
-            throw new ServletException(e);
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (IOException ex) {
+                // Error response could not be sent
+            }
         }
     }
 }
