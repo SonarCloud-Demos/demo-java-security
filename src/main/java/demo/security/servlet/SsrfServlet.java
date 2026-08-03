@@ -13,8 +13,12 @@ import java.io.IOException;
 public class SsrfServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String url = request.getParameter("url");
-        String body = Utils.fetchUrl(url);
-        response.getWriter().write(body);
+        try {
+            String url = request.getParameter("url");
+            String body = Utils.fetchUrl(url);
+            response.getWriter().write(body);
+        } catch (IOException ex) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 }

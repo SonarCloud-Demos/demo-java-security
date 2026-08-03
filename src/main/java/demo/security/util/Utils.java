@@ -20,6 +20,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.*;
@@ -60,13 +62,23 @@ public class Utils {
     }
 
     public static String fetchUrl(String url) throws IOException {
-        URL target = new URL(url); // Noncompliant - untrusted URL, no allowlist/scheme check (SSRF)
-        URLConnection connection = target.openConnection();
-        return new String(connection.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        List<String> allowedUrls = new ArrayList<String>();
+        allowedUrls.add("https://trusted1.example.com/");
+        allowedUrls.add("https://trusted2.example.com/");
+
+        if (allowedUrls.contains(url)) {
+            URL target = new URL(url);
+            URLConnection connection = target.openConnection();
+            return new String(connection.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        }
+        throw new IOException("URL is not in the allowlist");
     }
 
     public static Document parseXml(String xml) throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(); // Noncompliant - external entities not disabled (XXE)
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         DocumentBuilder builder = factory.newDocumentBuilder();
         return builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
     }
