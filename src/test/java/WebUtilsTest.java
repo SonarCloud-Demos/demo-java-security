@@ -4,6 +4,7 @@ import org.mockito.Mockito;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class WebUtilsTest {
@@ -13,7 +14,9 @@ public class WebUtilsTest {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         when(request.getRequestedSessionId()).thenReturn("validSessionId");
 
-        // WebUtils.getSessionId(request);
+        WebUtils.getSessionId(request);
+
+        verify(request).getRequestedSessionId();
     }
 
     @Test
