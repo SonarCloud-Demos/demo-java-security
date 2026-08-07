@@ -13,7 +13,15 @@ import java.io.IOException;
 public class FileServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String data = request.getParameter("data");
-        Utils.deleteFile(data);
+        try {
+            String data = request.getParameter("data");
+            Utils.deleteFile(data);
+        } catch (IOException ex) {
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (IOException e) {
+                // Failed to send error response
+            }
+        }
     }
 }

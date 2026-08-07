@@ -9,7 +9,9 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -28,7 +30,11 @@ public class UserServlet extends HttpServlet {
             });
             out.close();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (IOException ex) {
+                // Error while sending error response
+            }
         }
 
     }
@@ -38,7 +44,15 @@ public class UserServlet extends HttpServlet {
         if (sessionAuth != null) {
             try {
                 byte[] decoded = Base64.decodeBase64(sessionAuth);
-                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(decoded));
+                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(decoded)) {
+                    @Override
+                    protected Class<?> resolveClass(ObjectStreamClass osc) throws IOException, ClassNotFoundException {
+                        if (!SessionHeader.class.getName().equals(osc.getName())) {
+                            throw new InvalidClassException("Unauthorized deserialization", osc.getName());
+                        }
+                        return super.resolveClass(osc);
+                    }
+                };
                 return (SessionHeader) in.readObject();
             } catch (Exception e) {
                 return null;
@@ -62,7 +76,11 @@ public class UserServlet extends HttpServlet {
             });
             out.close();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (IOException ex) {
+                // Error while sending error response
+            }
         }
     }
 }
