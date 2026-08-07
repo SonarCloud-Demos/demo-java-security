@@ -9,8 +9,10 @@ public class DBUtils {
 
     Connection connection;
     public DBUtils() throws SQLException {
-        connection = DriverManager.getConnection(
-                "mYJDBCUrl", "myJDBCUser", "myJDBCPass");
+        String jdbcUrl = System.getenv("JDBC_URL");
+        String jdbcUser = System.getenv("JDBC_USER");
+        String jdbcPass = System.getenv("JDBC_PASSWORD");
+        connection = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPass);
     }
 
     public List<String> findUsers(String user) throws Exception {
