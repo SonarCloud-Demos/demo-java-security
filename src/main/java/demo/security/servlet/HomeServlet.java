@@ -18,6 +18,7 @@ public class HomeServlet extends HttpServlet {
     }
 
 
+    @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("name").trim();
@@ -31,6 +32,7 @@ public class HomeServlet extends HttpServlet {
         out.close();
     }
 
+    @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
