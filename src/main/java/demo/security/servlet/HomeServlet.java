@@ -20,9 +20,13 @@ public class HomeServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
-        String name = request.getParameter("name").trim();
-        response.setContentType("text/html");
-        writeResponse(response, name);
+        try {
+            String name = request.getParameter("name").trim();
+            response.setContentType("text/html");
+            writeResponse(response, name);
+        } catch (IOException ex) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
     
     protected void writeResponse(HttpServletResponse response, String name) throws IOException {
