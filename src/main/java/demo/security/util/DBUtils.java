@@ -30,7 +30,7 @@ public class DBUtils {
         ResultSet resultSet = statement.executeQuery(query);
         List<String> items = new ArrayList<String>();
         while (resultSet.next()){
-            items.add(resultSet.getString(0));
+            items.add(resultSet.getString(1));
         }
         return items;
     }
