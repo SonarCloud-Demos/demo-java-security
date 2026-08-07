@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.owasp.encoder.Encode;
 
 @WebServlet("/helloWorld")
 public class HomeServlet extends HttpServlet {
@@ -20,20 +21,28 @@ public class HomeServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
-        String name = request.getParameter("name").trim();
-        response.setContentType("text/html");
-        writeResponse(response, name);
+        try {
+            String name = request.getParameter("name").trim();
+            response.setContentType("text/html");
+            writeResponse(response, name);
+        } catch (IOException ex) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
     
     protected void writeResponse(HttpServletResponse response, String name) throws IOException {
         PrintWriter out = response.getWriter();
-        out.print("<h2>Hello "+name+ "</h2>");
+        out.print("<h2>Hello "+Encode.forHtml(name)+ "</h2>");
         out.close();
     }
 
     protected void doPost(HttpServletRequest request,
-                          HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
+                          HttpServletResponse response) {
+        try {
+            doGet(request, response);
+        } catch (ServletException | IOException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
