@@ -28,7 +28,11 @@ public class UserServlet extends HttpServlet {
             });
             out.close();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (IOException ioe) {
+                // Unable to send error response
+            }
         }
 
     }
@@ -62,7 +66,11 @@ public class UserServlet extends HttpServlet {
             });
             out.close();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An internal error occurred");
+            } catch (IOException ioe) {
+                // Cannot propagate exception to servlet container per S1989
+            }
         }
     }
 }
