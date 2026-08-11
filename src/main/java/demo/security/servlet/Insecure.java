@@ -2,8 +2,6 @@ package demo.security.servlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -28,7 +26,6 @@ public class Insecure {
     tempDir = File.createTempFile("", ".");
     tempDir.delete();
     tempDir.mkdir();
-    Files.exists(Paths.get("/tmp/", obj));
   }
 
   public String taintedSQL(HttpServletRequest request, Connection connection) throws Exception {
@@ -40,11 +37,11 @@ public class Insecure {
   }
   
   public String hotspotSQL(Connection connection, String user) throws Exception {
-	  Statement statement = null;
-	  statement = connection.createStatement();
-	  ResultSet rs = statement.executeQuery("select userid from users WHERE username=" + user);
-	  return rs.getString(0);
-	}
+    Statement statement = null;
+    statement = connection.createStatement();
+    ResultSet rs = statement.executeQuery("select userid from users WHERE username=" + user);
+    return rs.getString(0);
+  }
 
   // --------------------------------------------------------------------------
   // Custom sources, sanitizer and sinks example
