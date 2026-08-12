@@ -40,11 +40,11 @@ public class Insecure {
   }
   
   public String hotspotSQL(Connection connection, String user) throws Exception {
-	  Statement statement = null;
-	  statement = connection.createStatement();
-	  ResultSet rs = statement.executeQuery("select userid from users WHERE username=" + user);
-	  return rs.getString(0);
-	}
+    try (Statement statement = connection.createStatement()) {
+      ResultSet rs = statement.executeQuery("select userid from users WHERE username=" + user);
+      return rs.getString(0);
+    }
+  }
 
   // --------------------------------------------------------------------------
   // Custom sources, sanitizer and sinks example
