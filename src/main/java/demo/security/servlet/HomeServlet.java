@@ -21,6 +21,8 @@ public class HomeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("name").trim();
+        String debugMsg = "HomeServlet request received";
+        System.out.println(debugMsg);
         response.setContentType("text/html");
         writeResponse(response, name);
     }
