@@ -38,6 +38,14 @@
       <artifactId>commons-codec</artifactId>
       <version>1.16.0</version>
     </dependency>
+    <!-- MySQL JDBC driver, so DBUtils.getConnection() can resolve a real
+         driver at runtime instead of failing with "No suitable driver".
+         Licensed under GPL-2.0. -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.49</version>
+    </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
