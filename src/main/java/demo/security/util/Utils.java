@@ -29,8 +29,16 @@ public class Utils {
         }
     }
 
+    private static final String TARGET_DIRECTORY = System.getProperty("user.dir") + File.separator;
+
     public static void deleteFile(String fileName) throws IOException {
         File file = new File(fileName);
+        String canonicalPath = file.getCanonicalPath();
+
+        if (!canonicalPath.startsWith(TARGET_DIRECTORY)) {
+            throw new IOException("Entry is outside of the target directory");
+        }
+
         FileUtils.forceDelete(file);
     }
 
