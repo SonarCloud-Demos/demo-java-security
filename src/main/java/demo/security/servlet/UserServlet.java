@@ -38,7 +38,7 @@ public class UserServlet extends HttpServlet {
         if (sessionAuth != null) {
             try {
                 byte[] decoded = Base64.decodeBase64(sessionAuth);
-                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(decoded));
+                ObjectInputStream in = new SecureObjectInputStream(new ByteArrayInputStream(decoded));
                 return (SessionHeader) in.readObject();
             } catch (Exception e) {
                 return null;
