@@ -9,7 +9,9 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -34,17 +36,41 @@ public class UserServlet extends HttpServlet {
     }
 
     private SessionHeader getSessionHeader(HttpServletRequest request) {
-        String sessionAuth = request.getHeader("Session-Auth");
+        return deserializeSessionHeader(request.getHeader("Session-Auth"));
+    }
+
+    static SessionHeader deserializeSessionHeader(String sessionAuth) {
         if (sessionAuth != null) {
             try {
                 byte[] decoded = Base64.decodeBase64(sessionAuth);
-                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(decoded));
-                return (SessionHeader) in.readObject();
+                try (ObjectInputStream in = new SessionHeaderObjectInputStream(new ByteArrayInputStream(decoded))) {
+                    return (SessionHeader) in.readObject();
+                }
             } catch (Exception e) {
                 return null;
             }
         }
         return null;
+    }
+
+    private static final class SessionHeaderObjectInputStream extends ObjectInputStream {
+        SessionHeaderObjectInputStream(ByteArrayInputStream in) throws IOException {
+            super(in);
+        }
+
+        @Override
+        protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+            String className = desc.getName();
+            if (!SessionHeader.class.getName().equals(className) && !String.class.getName().equals(className)) {
+                throw new InvalidClassException("Unauthorized deserialization attempt", className);
+            }
+            return super.resolveClass(desc);
+        }
+
+        @Override
+        protected Class<?> resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
+            throw new InvalidClassException("Unauthorized deserialization attempt", "proxy classes are not allowed");
+        }
     }
 
     @Override
