@@ -7,10 +7,9 @@ import org.apache.commons.codec.binary.Base64;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @WebServlet("/users")
@@ -34,17 +33,26 @@ public class UserServlet extends HttpServlet {
     }
 
     private SessionHeader getSessionHeader(HttpServletRequest request) {
-        String sessionAuth = request.getHeader("Session-Auth");
-        if (sessionAuth != null) {
-            try {
-                byte[] decoded = Base64.decodeBase64(sessionAuth);
-                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(decoded));
-                return (SessionHeader) in.readObject();
-            } catch (Exception e) {
+        return parseSessionAuth(request.getHeader("Session-Auth"));
+    }
+
+    static SessionHeader parseSessionAuth(String sessionAuth) {
+        if (sessionAuth == null || sessionAuth.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            byte[] decoded = Base64.decodeBase64(sessionAuth);
+            String decodedText = new String(decoded, StandardCharsets.UTF_8);
+            int separatorIndex = decodedText.indexOf(':');
+            if (separatorIndex <= 0 || separatorIndex == decodedText.length() - 1) {
                 return null;
             }
+            String username = decodedText.substring(0, separatorIndex);
+            String sessionId = decodedText.substring(separatorIndex + 1);
+            return new SessionHeader(username, sessionId);
+        } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 
     @Override
