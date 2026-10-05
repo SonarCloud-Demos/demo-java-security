@@ -9,12 +9,16 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
 @WebServlet("/users")
 public class UserServlet extends HttpServlet {
+    private static final ObjectInputFilter SESSION_HEADER_FILTER =
+            ObjectInputFilter.Config.createFilter("demo.security.util.SessionHeader;maxdepth=2;maxrefs=10;maxbytes=4096;!*");
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String user = request.getParameter("username");
@@ -39,6 +43,7 @@ public class UserServlet extends HttpServlet {
             try {
                 byte[] decoded = Base64.decodeBase64(sessionAuth);
                 ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(decoded));
+                in.setObjectInputFilter(SESSION_HEADER_FILTER);
                 return (SessionHeader) in.readObject();
             } catch (Exception e) {
                 return null;
