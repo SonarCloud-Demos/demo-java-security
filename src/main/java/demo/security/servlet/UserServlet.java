@@ -1,6 +1,7 @@
 package demo.security.servlet;
 
 import demo.security.util.DBUtils;
+import demo.security.util.SecureObjectInputStream;
 import demo.security.util.SessionHeader;
 import org.apache.commons.codec.binary.Base64;
 
@@ -38,7 +39,7 @@ public class UserServlet extends HttpServlet {
         if (sessionAuth != null) {
             try {
                 byte[] decoded = Base64.decodeBase64(sessionAuth);
-                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(decoded));
+                ObjectInputStream in = new SecureObjectInputStream(new ByteArrayInputStream(decoded));
                 return (SessionHeader) in.readObject();
             } catch (Exception e) {
                 return null;
