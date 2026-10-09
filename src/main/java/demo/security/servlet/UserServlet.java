@@ -9,6 +9,7 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.util.List;
@@ -38,8 +39,12 @@ public class UserServlet extends HttpServlet {
         if (sessionAuth != null) {
             try {
                 byte[] decoded = Base64.decodeBase64(sessionAuth);
-                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(decoded));
-                return (SessionHeader) in.readObject();
+                try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(decoded))) {
+                    in.setObjectInputFilter(ObjectInputFilter.Config.createFilter(
+                            "demo.security.util.SessionHeader;java.lang.String;maxdepth=2;maxrefs=10;maxbytes=4096;maxarray=0;!*"));
+                    Object obj = in.readObject();
+                    return (obj instanceof SessionHeader sessionHeader) ? sessionHeader : null;
+                }
             } catch (Exception e) {
                 return null;
             }
