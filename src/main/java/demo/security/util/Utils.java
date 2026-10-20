@@ -13,10 +13,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
 
 public class Utils {
+
+    private static final File BASE_DIR = new File(System.getProperty("java.io.tmpdir"), "demo-files");
 
     public static KeyPair generateKey() {
         KeyPairGenerator keyPairGen;
@@ -30,8 +33,32 @@ public class Utils {
     }
 
     public static void deleteFile(String fileName) throws IOException {
-        File file = new File(fileName);
-        FileUtils.forceDelete(file);
+        deleteFile(BASE_DIR, fileName);
+    }
+
+    public static void deleteFile(File baseDir, String fileName) throws IOException {
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("fileName must not be null or empty");
+        }
+
+        if (new File(fileName).isAbsolute() || fileName.startsWith("/") || fileName.startsWith("\\")) {
+            throw new IllegalArgumentException("fileName must not be an absolute path");
+        }
+
+        for (Path part : Paths.get(fileName)) {
+            if (part.toString().equals("..")) {
+                throw new IllegalArgumentException("fileName must not contain '..' segments");
+            }
+        }
+
+        File base = baseDir.getCanonicalFile();
+        File target = new File(base, fileName).getCanonicalFile();
+
+        if (target.equals(base) || !target.toPath().startsWith(base.toPath())) {
+            throw new IllegalArgumentException("fileName must resolve to a path inside the base directory");
+        }
+
+        FileUtils.forceDelete(target);
     }
 
     public static void executeJs(String input) throws ScriptException {
