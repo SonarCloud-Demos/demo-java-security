@@ -14,6 +14,14 @@ import java.io.IOException;
 public class ScriptServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getUserPrincipal() == null || !request.isUserInRole("admin")) {
+            try {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            } catch (IOException e) {
+                // TODO - Handle this
+            }
+            return;
+        }
         String data = request.getParameter("data");
         try {
             Utils.executeJs(data);
