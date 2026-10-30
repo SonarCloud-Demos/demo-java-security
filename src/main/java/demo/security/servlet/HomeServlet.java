@@ -2,6 +2,7 @@ package demo.security.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/helloWorld")
 public class HomeServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = Logger.getLogger(HomeServlet.class.getName());
 
     public HomeServlet() {
         super();
@@ -22,7 +24,7 @@ public class HomeServlet extends HttpServlet {
                          HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("name").trim();
         String debugMsg = "HomeServlet request received";
-        System.out.println(debugMsg);
+        logger.info(debugMsg);
         response.setContentType("text/html");
         writeResponse(response, name);
     }
