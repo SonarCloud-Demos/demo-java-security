@@ -29,9 +29,26 @@ public class Utils {
         }
     }
 
-    public static void deleteFile(String fileName) throws IOException {
-        File file = new File(fileName);
-        FileUtils.forceDelete(file);
+    public static void deleteFile(File baseDir, String fileName) throws IOException {
+        if (baseDir == null || fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("Invalid file name");
+        }
+        if (new File(fileName).isAbsolute()) {
+            throw new IllegalArgumentException("Absolute paths are not allowed");
+        }
+        for (String segment : fileName.split("[/\\\\]")) {
+            if ("..".equals(segment)) {
+                throw new IllegalArgumentException("Path traversal is not allowed");
+            }
+        }
+
+        String basePath = baseDir.getCanonicalPath();
+        File target = new File(baseDir, fileName).getCanonicalFile();
+        if (!target.getPath().startsWith(basePath + File.separator) || target.getPath().equals(basePath)) {
+            throw new IllegalArgumentException("Target is outside of the base directory");
+        }
+
+        FileUtils.forceDelete(target);
     }
 
     public static void executeJs(String input) throws ScriptException {
