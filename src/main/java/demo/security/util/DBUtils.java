@@ -1,6 +1,5 @@
 package demo.security.util;
 
-import javax.servlet.http.HttpServletRequest;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
