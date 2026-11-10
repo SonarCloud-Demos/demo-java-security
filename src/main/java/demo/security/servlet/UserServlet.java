@@ -52,7 +52,12 @@ public class UserServlet extends HttpServlet {
         SessionHeader sessionHeader = getSessionHeader(request);
         if (sessionHeader == null) return;
         String user = sessionHeader.getUsername();
+        String sessionId = sessionHeader.getSessionId();
         try {
+            if (user == null || sessionId == null || sessionId.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
             DBUtils db = new DBUtils();
             List<String> users = db.findUsers(user);
             response.setContentType("text/html");
