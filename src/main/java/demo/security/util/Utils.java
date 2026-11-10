@@ -30,8 +30,13 @@ public class Utils {
     }
 
     public static void deleteFile(String fileName) throws IOException {
-        File file = new File(fileName);
-        FileUtils.forceDelete(file);
+        String baseDirectory = new File(System.getProperty("user.dir")).getCanonicalPath() + File.separator;
+        File file = new File(baseDirectory, fileName);
+        String canonicalPath = file.getCanonicalPath();
+        if (!canonicalPath.startsWith(baseDirectory)) {
+            throw new IOException("Entry is outside of the target directory");
+        }
+        FileUtils.forceDelete(new File(canonicalPath));
     }
 
     public static void executeJs(String input) throws ScriptException {
