@@ -1,8 +1,5 @@
 package demo.security.servlet;
 
-import demo.security.util.Utils;
-
-import javax.script.ScriptException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,10 +11,9 @@ import java.io.IOException;
 public class ScriptServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String data = request.getParameter("data");
         try {
-            Utils.executeJs(data);
-        } catch (ScriptException e) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Script execution is disabled");
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
