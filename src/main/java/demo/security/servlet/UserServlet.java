@@ -7,10 +7,9 @@ import org.apache.commons.codec.binary.Base64;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @WebServlet("/users")
@@ -38,8 +37,12 @@ public class UserServlet extends HttpServlet {
         if (sessionAuth != null) {
             try {
                 byte[] decoded = Base64.decodeBase64(sessionAuth);
-                ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(decoded));
-                return (SessionHeader) in.readObject();
+                String value = new String(decoded, StandardCharsets.UTF_8);
+                int separator = value.indexOf(':');
+                if (separator < 0) {
+                    return null;
+                }
+                return new SessionHeader(value.substring(0, separator), value.substring(separator + 1));
             } catch (Exception e) {
                 return null;
             }
